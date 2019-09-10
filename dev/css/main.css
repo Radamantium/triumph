@@ -1,0 +1,66 @@
+$container_width: 600px;
+$button_size: 60px;
+$container_hight: $container_width + $button_size;
+
+* {
+  outline: none;
+}
+
+body {
+  color: #000;
+  margin: 0;
+  padding: 0;
+  font-family: 'Roboto', sans-serif;
+}
+
+div, svg, h1 {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+.container-wrapper {
+  width: 100vw;
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.contaner {
+  width: $container_width;
+  height: $container_hight;
+  background: gray;
+}
+
+.header {
+  width: 100%;
+  height: $button_size;
+  display: flex;
+  justify-content: space-between;
+}
+
+.header__title {
+  font-size: 20px;
+  font-weight: 700;
+  text-align: center;
+  width: $container_width - 5*$button_size;
+  height: $button_size;
+  line-height: $button_size;
+}
+
+.controls {
+  display: flex;
+}
+
+.controls__button {
+  display: block;
+  width: $button_size;
+  height: $button_size;
+}
+
+svg {
+  background: lightgray;
+  border: 1px solid #aaa;
+}
+

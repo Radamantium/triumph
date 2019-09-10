@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Triumph - Bézier curve</title>
+  <link href="https://fonts.googleapis.com/css?family=Roboto:400,700&display=swap&subset=cyrillic" rel="stylesheet">
+  <link rel="stylesheet" href="css/main.css">
+</head>
+<body>
+  <div class="container-wrapper">
+    <div class="contaner">
+      <header class="header">
+        <h1 class="header__title">
+          Cubic Bezier Curves!
+        </h1>
+        <nav class="controls">
+          <button id="move-curve-btn" class="controls__button">
+            Move curve
+          </button>
+          <button id="add-curve-btn" class="controls__button">
+            Add curve
+          </button>
+          <button id="del-curve-btn" class="controls__button">
+            Delete curve
+          </button>
+          <button id="change-color-btn" class="controls__button">
+            Change color
+          </button>
+          <button id="clear-btn" class="controls__button">
+            Clear all
+          </button>
+        </nav>
+      </header>
+      <svg id="bezierCanvas" width="600" height="600">
+        <g id="templates">
+          <path id="path-template" d="M -100, -100 C -100, -100, -100, -100, -100, -100" stroke="red" stroke-width="4" fill="none" stroke-linecap="round"/>
+          <line id="line-template" x1="-100" y1="-100" x2="-100" y2="-100" stroke="black" stroke-width="1" stroke-linecap="round"/>
+          <circle id="circle-template" cx="-100" cy="-100" r="5" stroke="black" stroke-width="1" fill="red" />
+        </g>
+      </svg>
+    </div>
+  </div>   
+</body>
+<script src="js/main.js"></script>
+</html>
+
+        <!-- <circle cx="50" cy="50" r="40" stroke="green" stroke-width="4" fill="yellow" /> -->
+        <!-- <path id="curve_001" d="M 1, 1 C 100, 100, 500, 100, 400, 300"  stroke="blue" stroke-width="4" fill="none" stroke-linecap="round"/> -->

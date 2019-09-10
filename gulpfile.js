@@ -32,7 +32,7 @@ gulp.task('scripts:dev', function() {
   //   devtool: 'source-map'
   // }
 
-  return gulp.src('./dev/js/main.js')
+  return gulp.src('./dev/js/*.js')
     // .pipe(webpack(webpackConfig))
     .pipe(gulp.dest('./prod/js'));
 });

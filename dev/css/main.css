@@ -1,5 +1,6 @@
 $container_width: 600px;
 $button_size: 60px;
+$canvas_size: $container_width;
 $container_hight: $container_width + $button_size;
 
 * {
@@ -30,7 +31,7 @@ div, svg, h1 {
 .contaner {
   width: $container_width;
   height: $container_hight;
-  background: gray;
+  background: lightgray;
 }
 
 .header {
@@ -44,7 +45,7 @@ div, svg, h1 {
   font-size: 20px;
   font-weight: 700;
   text-align: center;
-  width: $container_width - 5*$button_size;
+  width: $container_width - 4*$button_size;
   height: $button_size;
   line-height: $button_size;
 }
@@ -60,6 +61,8 @@ div, svg, h1 {
 }
 
 svg {
+  width: $canvas_size;
+  height: $canvas_size;
   background: lightgray;
   border: 1px solid #aaa;
 }

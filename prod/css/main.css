@@ -22,7 +22,7 @@ div, svg, h1 {
 .contaner {
   width: 600px;
   height: 660px;
-  background: gray; }
+  background: lightgray; }
 
 .header {
   width: 100%;
@@ -34,7 +34,7 @@ div, svg, h1 {
   font-size: 20px;
   font-weight: 700;
   text-align: center;
-  width: 300px;
+  width: 360px;
   height: 60px;
   line-height: 60px; }
 
@@ -47,5 +47,7 @@ div, svg, h1 {
   height: 60px; }
 
 svg {
+  width: 600px;
+  height: 600px;
   background: lightgray;
   border: 1px solid #aaa; }

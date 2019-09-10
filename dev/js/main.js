@@ -54,12 +54,7 @@ function bezier(svgCanvasId = 'bezierCanvas',
   colorButton.addEventListener( 'click', changeCurveColor);
   bezierCanvas.addEventListener('click', unselectCurves);
 
-  function getLocalCoords(e) {
-    let box = bezierCanvas.getBoundingClientRect();
-    let localCoordX = Math.round( e.pageX - box.x );
-    let localCoordY = Math.round( e.pageY - box.y );
-    return new Point(localCoordX, localCoordY);
-  }
+
 
 
 
@@ -347,19 +342,19 @@ function bezier(svgCanvasId = 'bezierCanvas',
             e.stopPropagation();
             pointC1 = getLocalCoords(e);
             newCurve.setPointsAndUpdate(pointA, pointC1, pointC1, pointC1);
-          }
+          };
 
           document.onmouseup = function(e) {
             document.onmousemove = function(e) {
               e.stopPropagation();
               pointB = getLocalCoords(e);
               newCurve.setPointsAndUpdate(pointA, pointC1, pointB, pointB);
-            }
+            };
             document.onmouseup = null;
             bezierCanvas.onmousedown = null;
             getEndPoints();
-          }
-        }
+          };
+        };
       }
 
       function getEndPoints() {
@@ -374,16 +369,17 @@ function bezier(svgCanvasId = 'bezierCanvas',
             e.stopPropagation();
             pointC2 = getLocalCoords(e);
             newCurve.setPointsAndUpdate(pointA, pointC1, pointC2, pointB);
-          }
+          };
 
           document.onmouseup = function(e) {
             e.stopPropagation();
             document.onmousemove = null;
             document.onmouseup = null;
             bezierCanvas.onmousedown = null;
+            newCurve.setPointListeners();
             curves.push(newCurve);
-          }
-        }
+          };
+        };
       }
     }
   }

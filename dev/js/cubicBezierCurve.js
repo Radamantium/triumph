@@ -35,6 +35,12 @@ function Point(coordX, coordY) {
   return { coordX, coordY };
 }
 
+function getLocalCoords(e) {
+  let box = bezierCanvas.getBoundingClientRect();
+  let localCoordX = Math.round( e.pageX - box.x );
+  let localCoordY = Math.round( e.pageY - box.y );
+  return new Point(localCoordX, localCoordY);
+}
 
 /* CONSTRUCTOR */
 function CubicBezierCurve(pointA, pointC1, pointC2, pointB, canvas) {
@@ -95,7 +101,6 @@ function CubicBezierCurve(pointA, pointC1, pointC2, pointB, canvas) {
   };
 
   this.updatePath = function() {
-    console.log('updatePath');
     let path = `M ${this.pointA.coordX},   ${this.pointA.coordY} 
                 C ${this.pointC1.coordX},  ${this.pointC1.coordY}, 
                   ${this.pointC2.coordX},  ${this.pointC2.coordY}, 
@@ -124,6 +129,12 @@ function CubicBezierCurve(pointA, pointC1, pointC2, pointB, canvas) {
       guidePointC1.id = 'guidePointC1_' + this.num;
       guidePointC2.id = 'guidePointC2_' + this.num;
       guidePointB.id  = 'guidePointB_' + this.num;
+
+
+      // guidePointA.addEventListener( 'click',  this.movePointA);
+      // guidePointC1.addEventListener('click',  this.movePointC1);
+      // guidePointC2.addEventListener('click',  this.movePointC2);
+      // guidePointB.addEventListener( 'click',  this.movePointB);
 
       this.guides = {
         guideLineAC1,
@@ -214,7 +225,55 @@ function CubicBezierCurve(pointA, pointC1, pointC2, pointB, canvas) {
     parent.appendChild( this.guides.guidePointB );
   };
 
+  this.setPointListeners = function() {
+    this.setPointMoveListener(this.guides.guidePointA,  this.setAndUpdatePointA.bind(this));
+    this.setPointMoveListener(this.guides.guidePointC1, this.setAndUpdatePointC1.bind(this));
+    this.setPointMoveListener(this.guides.guidePointC2, this.setAndUpdatePointC2.bind(this));
+    this.setPointMoveListener(this.guides.guidePointB,  this.setAndUpdatePointB.bind(this));
+  };    
 
+  this.setPointMoveListener = function(element, callback) {
+     element.onmousedown = function(e) {
+      e.stopPropagation();
+      e.preventDefault();
+
+      console.log('setPointMoveListener');
+      document.onmousemove = function(e) {
+        e.stopPropagation();
+        let point = getLocalCoords(e);
+        callback(point);
+      };
+
+      document.onmouseup = function(e) {
+        document.onmousemove = null;
+        document.onmouseup = null;
+      };
+    };
+  }
+
+  this.setAndUpdatePointA = function(pointA) {
+    this.pointA = pointA;
+    this.updatePath();
+    this.updateGuidesPosition();
+  };
+
+  this.setAndUpdatePointC1 = function(pointC1) {
+    this.pointC1 = pointC1;
+    this.updatePath();
+    this.updateGuidesPosition();
+  };
+
+  this.setAndUpdatePointC2 = function(pointC2) {
+    this.pointC2 = pointC2;
+    this.updatePath();
+    this.updateGuidesPosition();
+  };
+
+  this.setAndUpdatePointB = function(pointB) {
+    this.pointB = pointB;
+    this.updatePath();
+    this.updateGuidesPosition();
+  };
 
 
 ////////////////////

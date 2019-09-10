@@ -3,10 +3,6 @@
 /* BASE VARIABLES */
 let curveCounter = counter();
 
-///!!!!!external
-let curves = [];
-let selectedCurveNum = -1;
-
 
 /* DEFAULT OPTIONS */
 let defaultCurveFill = 'none';
@@ -258,6 +254,10 @@ function CubicBezierCurve(pointA, pointC1, pointC2, pointB, canvas) {
     this.updateGuidesPosition();
   };
 
+  this.setColorAndUpate = function(color) {
+    this.stroke = color;
+    this.html.setAttribute('stroke', color);
+  }
 
 ///////////
 

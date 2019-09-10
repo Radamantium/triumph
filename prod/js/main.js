@@ -13,7 +13,9 @@ function bezier(svgCanvasId = 'bezierCanvas',
   let clearButton;
   let addButton;
   let delButton;
-  let colorButton;
+  let changeColorButton;
+
+
 
   try {
     let errorStingBegin = 'function "bezier" error. Uncorrect input data: ';
@@ -39,8 +41,8 @@ function bezier(svgCanvasId = 'bezierCanvas',
       throw new Error(errorStingBegin + 'delBtnId' + errorStingEnd);
     }
 
-    colorButton = document.getElementById(colorBtnId);
-    if (!colorButton) {
+    changeColorButton = document.getElementById(colorBtnId);
+    if (!changeColorButton) {
       throw new Error(errorStingBegin + 'colorBtnId' + errorStingEnd);
     }
   } catch (error) {
@@ -51,10 +53,14 @@ function bezier(svgCanvasId = 'bezierCanvas',
   clearButton.addEventListener( 'click', clearBezierCanvas);
   addButton.addEventListener(   'click', addNewCurve);
   delButton.addEventListener(   'click', deleteSelectedCurve);
-  colorButton.addEventListener( 'click', changeCurveColor);
+  changeColorButton.addEventListener( 'click', changeCurveColor);
   bezierCanvas.addEventListener('mousedown', unselectCurves);
 
+  setColorButtons();
+
+  let curves = [];
   let selectedCurve = null;
+
 
   /* FUNCTIONS */
   function addNewCurve(e) {
@@ -141,6 +147,7 @@ function bezier(svgCanvasId = 'bezierCanvas',
   }
 
   function unselectCurves() {
+    document.getElementById('palette').classList.add('palette_hidden');
     selectedCurve = null;
 
     for (let curve of curves) {
@@ -163,13 +170,26 @@ function bezier(svgCanvasId = 'bezierCanvas',
 
     let selectedCurveNum = curves.findIndex( (item) => item.id == selectedCurve.id );
     curves.splice(selectedCurveNum, 1);
-    
+
     selectedCurve.delete();
     selectedCurve = null;
-
   }
 
   function changeCurveColor(e) {
-    console.log('changeCurveColor');
+    document.getElementById('palette').classList.toggle('palette_hidden');
+  }
+
+  function setColorButtons() {
+    let colorButtons = document.getElementsByClassName('palette__color');
+    for (let button of colorButtons) {
+      let newColor = button.dataset.color;
+      button.addEventListener('click', function() {
+        if (selectedCurve == null) {
+          defaultCurveStroke = newColor;
+        } else {
+          selectedCurve.setColorAndUpate(newColor);
+        }
+      });
+    }
   }
 }

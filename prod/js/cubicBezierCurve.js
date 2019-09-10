@@ -45,23 +45,13 @@ function getLocalCoords(e) {
 /* CONSTRUCTOR */
 function CubicBezierCurve(pointA, pointC1, pointC2, pointB, canvas) {
 
-
-
-
-
+  /* FUNCTIONS */
 
   // this.visibleGuides = true;
 
   //!!!!!!!!!!!!!!!!!!!!!!!!
   // newPath.addEventListener('click', selectCurve.bind(newPath));
 
-  //!!!!!!!!!!!!!!!!!!!!!!!!
-  // curves.push(newPath);
-
-
-  //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-  this.generateCurveHTMLGroup = function() {};
-  //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
   this.generateCurveHTML = function() {
     let pathTemplate = document.getElementById('path-template');
@@ -129,12 +119,6 @@ function CubicBezierCurve(pointA, pointC1, pointC2, pointB, canvas) {
       guidePointC1.id = 'guidePointC1_' + this.num;
       guidePointC2.id = 'guidePointC2_' + this.num;
       guidePointB.id  = 'guidePointB_' + this.num;
-
-
-      // guidePointA.addEventListener( 'click',  this.movePointA);
-      // guidePointC1.addEventListener('click',  this.movePointC1);
-      // guidePointC2.addEventListener('click',  this.movePointC2);
-      // guidePointB.addEventListener( 'click',  this.movePointB);
 
       this.guides = {
         guideLineAC1,
@@ -221,11 +205,11 @@ function CubicBezierCurve(pointA, pointC1, pointC2, pointB, canvas) {
     parent.appendChild( this.guides.guideLineBC2 );
     parent.appendChild( this.guides.guidePointA );
     parent.appendChild( this.guides.guidePointC1 );
-    parent.appendChild( this.guides.guidePointC2 );
     parent.appendChild( this.guides.guidePointB );
+    parent.appendChild( this.guides.guidePointC2 );
   };
 
-  this.setPointListeners = function() {
+  this.setPointsListeners = function() {
     this.setPointMoveListener(this.guides.guidePointA,  this.setAndUpdatePointA.bind(this));
     this.setPointMoveListener(this.guides.guidePointC1, this.setAndUpdatePointC1.bind(this));
     this.setPointMoveListener(this.guides.guidePointC2, this.setAndUpdatePointC2.bind(this));
@@ -233,11 +217,10 @@ function CubicBezierCurve(pointA, pointC1, pointC2, pointB, canvas) {
   };    
 
   this.setPointMoveListener = function(element, callback) {
-     element.onmousedown = function(e) {
+    element.onmousedown = function(e) {
       e.stopPropagation();
       e.preventDefault();
 
-      console.log('setPointMoveListener');
       document.onmousemove = function(e) {
         e.stopPropagation();
         let point = getLocalCoords(e);
@@ -276,9 +259,57 @@ function CubicBezierCurve(pointA, pointC1, pointC2, pointB, canvas) {
   };
 
 
+///////////
+
+  this.setMoveListener = function() {
+    this.setCurveMoveListener(this.html, this.move.bind(this));
+  };   
+
+  this.setCurveMoveListener = function(element, moveCallback) {
+    element.onmousedown = function(e) {
+      e.stopPropagation();
+      e.preventDefault();
+      let startPosition = getLocalCoords(e);
+
+      document.onmousemove = function(e) {
+        e.stopPropagation();
+        let nextPosition = getLocalCoords(e);
+        let deltaX = nextPosition.coordX - startPosition.coordX;
+        let deltaY = nextPosition.coordY - startPosition.coordY;
+        startPosition = nextPosition;
+        moveCallback(deltaX, deltaY);
+      };
+
+      document.onmouseup = function(e) {
+        document.onmousemove = null;
+        document.onmouseup = null;
+      };
+    };
+  }
+
+  this.move = function(deltaX, deltaY) {
+    let newPointA  = new Point(deltaX + this.pointA.coordX,  deltaY + this.pointA.coordY);
+    let newPointC1 = new Point(deltaX + this.pointC1.coordX, deltaY + this.pointC1.coordY);
+    let newPointC2 = new Point(deltaX + this.pointC2.coordX, deltaY + this.pointC2.coordY);
+    let newPointB  = new Point(deltaX + this.pointB.coordX,  deltaY + this.pointB.coordY);
+
+    this.setPoints(newPointA, newPointC1, newPointC2, newPointB);
+    this.updatePath();
+    this.updateGuidesPosition();
+  };
+
 ////////////////////
-  this.showGuides = function() {};
-  this.hideGuides = function() {};
+  this.showGuides = function() {
+    for (let key in this.guides) {
+      this.guides[key].setAttribute('visibility', 'visible');
+    }
+  };
+
+  this.hideGuides = function() {
+    for (let key in this.guides) {
+      this.guides[key].setAttribute('visibility', 'hidden');
+    }
+  };
 
   this.updateParameters = function() {
     this.updatePath();
@@ -286,18 +317,29 @@ function CubicBezierCurve(pointA, pointC1, pointC2, pointB, canvas) {
     this.updateGuidesPosition();
     this.setGuidesDisplayParams();
   };
+
+  this.delete = function() {
+    document.getElementById(this.id).remove();
+    document.getElementById(this.guides.guideLineAC1.id).remove();
+    document.getElementById(this.guides.guideLineBC2.id).remove();
+    document.getElementById(this.guides.guidePointA.id).remove();
+    document.getElementById(this.guides.guidePointC1.id).remove();
+    document.getElementById(this.guides.guidePointC2.id).remove();
+    document.getElementById(this.guides.guidePointB.id).remove();
+  };
+
 ////////////////////////
 
+  /* GENERATE NEW CURVE */
   this.generateCurveHTML();
   this.setCurveDefaultDisplayParams();
   this.setPoints(pointA, pointC1, pointC2, pointB);
   this.appendCurveHTMLTo(canvas);
   this.updatePath();
-
   this.generateGuidesHTML();
   this.setGuidesDefaultDisplayParams();
   this.updateGuidesPosition();
   this.appendGuidesHTMLTo(canvas);
-
-
+  // this.setPointsListeners();
+  // this.setMoveListener();
 }

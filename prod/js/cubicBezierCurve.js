@@ -97,65 +97,65 @@ function CubicBezierCurve(pointA, pointC1, pointC2, pointB, canvas) {
   };
 
     this._setCurveDefaultDisplayParams = function() {
-      this.fill          = options.defaultCurveFill;
-      this.stroke        = options.defaultCurveStroke;
-      this.strokeWidth   = options.defaultCurveStrokeWidth;
-      this.strokeLinecap = options.defaultCurveStrokeLinecap;
+      this._fill          = options.defaultCurveFill;
+      this._stroke        = options.defaultCurveStroke;
+      this._strokeWidth   = options.defaultCurveStrokeWidth;
+      this._strokeLinecap = options.defaultCurveStrokeLinecap;
 
       this._setCurveDisplayParams();
     };
 
     this._setCurveDisplayParams = function() {
-      this.html.setAttribute('fill',           this.fill);
-      this.html.setAttribute('stroke',         this.stroke);
-      this.html.setAttribute('stroke-width',   this.strokeWidth);
-      this.html.setAttribute('stroke-linecap', this.strokeLinecap);
+      this.html.setAttribute('fill',           this._fill);
+      this.html.setAttribute('stroke',         this._stroke);
+      this.html.setAttribute('stroke-width',   this._strokeWidth);
+      this.html.setAttribute('stroke-linecap', this._strokeLinecap);
     };
 
     this._setGuidesDefaultDisplayParams = function() {
-      this.guideLineFill          = options.defaultGuideLineFill;
-      this.guideLineStroke        = options.defaultGuideLineStroke;
-      this.guideLineStrokeWidth   = options.defaultGuideLineStrokeWidth;
-      this.guideLineStrokeLinecap = options.defaultGuideLineStrokeLinecap;
+      this._guideLineFill          = options.defaultGuideLineFill;
+      this._guideLineStroke        = options.defaultGuideLineStroke;
+      this._guideLineStrokeWidth   = options.defaultGuideLineStrokeWidth;
+      this._guideLineStrokeLinecap = options.defaultGuideLineStrokeLinecap;
 
-      this.guidePointFill         = options.defaultGuidePointFill;
-      this.guidePointStroke       = options.defaultGuidePointStroke;
-      this.guidePointStrokeWidth  = options.defaultGuidePointStrokeWidth;
-      this.guidePointRadius       = options.defaultGuidePointRadius;
+      this._guidePointFill         = options.defaultGuidePointFill;
+      this._guidePointStroke       = options.defaultGuidePointStroke;
+      this._guidePointStrokeWidth  = options.defaultGuidePointStrokeWidth;
+      this._guidePointRadius       = options.defaultGuidePointRadius;
 
       this._setGuidesDisplayParams();
     }
 
     this._setGuidesDisplayParams = function() {
-      this.guides.guideLineAC1.setAttribute('fill', this.guideLineFill);
-      this.guides.guideLineAC1.setAttribute('stroke', this.guideLineStroke);
-      this.guides.guideLineAC1.setAttribute('stroke-width', this.guideLineStrokeWidth);
-      this.guides.guideLineAC1.setAttribute('stroke-linecap', this.guideLineStrokeLinecap);
+      this.guides.guideLineAC1.setAttribute('fill', this._guideLineFill);
+      this.guides.guideLineAC1.setAttribute('stroke', this._guideLineStroke);
+      this.guides.guideLineAC1.setAttribute('stroke-width', this._guideLineStrokeWidth);
+      this.guides.guideLineAC1.setAttribute('stroke-linecap', this._guideLineStrokeLinecap);
       
-      this.guides.guideLineBC2.setAttribute('fill', this.guideLineFill);
-      this.guides.guideLineBC2.setAttribute('stroke', this.guideLineStroke);
-      this.guides.guideLineBC2.setAttribute('stroke-width', this.guideLineStrokeWidth);
-      this.guides.guideLineBC2.setAttribute('stroke-linecap', this.guideLineStrokeLinecap);
+      this.guides.guideLineBC2.setAttribute('fill', this._guideLineFill);
+      this.guides.guideLineBC2.setAttribute('stroke', this._guideLineStroke);
+      this.guides.guideLineBC2.setAttribute('stroke-width', this._guideLineStrokeWidth);
+      this.guides.guideLineBC2.setAttribute('stroke-linecap', this._guideLineStrokeLinecap);
       
-      this.guides.guidePointA.setAttribute('fill', this.guidePointFill);
-      this.guides.guidePointA.setAttribute('stroke', this.guidePointStroke);
-      this.guides.guidePointA.setAttribute('stroke-width', this.guidePointStrokeWidth);
-      this.guides.guidePointA.setAttribute('r', this.guidePointRadius);
+      this.guides.guidePointA.setAttribute('fill', this._guidePointFill);
+      this.guides.guidePointA.setAttribute('stroke', this._guidePointStroke);
+      this.guides.guidePointA.setAttribute('stroke-width', this._guidePointStrokeWidth);
+      this.guides.guidePointA.setAttribute('r', this._guidePointRadius);
       
-      this.guides.guidePointC1.setAttribute('fill', this.guidePointFill);
-      this.guides.guidePointC1.setAttribute('stroke', this.guidePointStroke);
-      this.guides.guidePointC1.setAttribute('stroke-width', this.guidePointStrokeWidth);
-      this.guides.guidePointC1.setAttribute('r', this.guidePointRadius);
+      this.guides.guidePointC1.setAttribute('fill', this._guidePointFill);
+      this.guides.guidePointC1.setAttribute('stroke', this._guidePointStroke);
+      this.guides.guidePointC1.setAttribute('stroke-width', this._guidePointStrokeWidth);
+      this.guides.guidePointC1.setAttribute('r', this._guidePointRadius);
       
-      this.guides.guidePointC2.setAttribute('fill', this.guidePointFill);
-      this.guides.guidePointC2.setAttribute('stroke', this.guidePointStroke);
-      this.guides.guidePointC2.setAttribute('stroke-width', this.guidePointStrokeWidth);
-      this.guides.guidePointC2.setAttribute('r', this.guidePointRadius);
+      this.guides.guidePointC2.setAttribute('fill', this._guidePointFill);
+      this.guides.guidePointC2.setAttribute('stroke', this._guidePointStroke);
+      this.guides.guidePointC2.setAttribute('stroke-width', this._guidePointStrokeWidth);
+      this.guides.guidePointC2.setAttribute('r', this._guidePointRadius);
       
-      this.guides.guidePointB.setAttribute('fill', this.guidePointFill);
-      this.guides.guidePointB.setAttribute('stroke', this.guidePointStroke);
-      this.guides.guidePointB.setAttribute('stroke-width', this.guidePointStrokeWidth);
-      this.guides.guidePointB.setAttribute('r', this.guidePointRadius);
+      this.guides.guidePointB.setAttribute('fill', this._guidePointFill);
+      this.guides.guidePointB.setAttribute('stroke', this._guidePointStroke);
+      this.guides.guidePointB.setAttribute('stroke-width', this._guidePointStrokeWidth);
+      this.guides.guidePointB.setAttribute('r', this._guidePointRadius);
     };
 
 
@@ -318,8 +318,8 @@ function CubicBezierCurve(pointA, pointC1, pointC2, pointB, canvas) {
 
 
   this.setColorAndUpate = function(color) {
-    this.stroke = color;
-    this.html.setAttribute('stroke', this.stroke);
+    this._stroke = color;
+    this.html.setAttribute('stroke', this._stroke);
   }
 
 

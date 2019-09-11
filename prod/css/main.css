@@ -34,6 +34,7 @@ div, svg, h1, button {
   font-size: 20px;
   font-weight: 700;
   text-align: center;
+  color: dimgrey;
   width: 360px;
   height: 60px;
   line-height: 60px; }
@@ -59,9 +60,6 @@ path {
 circle {
   cursor: grab; }
 
-/*circle:active {
-  cursor: grabbing;
-}*/
 .palette {
   position: absolute;
   top: 60px;
@@ -69,31 +67,7 @@ circle {
   width: 100%;
   background: #fff; }
 
-.palette_hidden {
-  display: none; }
-
 .palette__color {
   height: 20px;
   border: 1px solid #000;
   margin: 10px; }
-
-.palette__color_white {
-  background-color: white; }
-
-.palette__color_black {
-  background-color: black; }
-
-.palette__color_dimgrey {
-  background-color: dimgrey; }
-
-.palette__color_red {
-  background-color: red; }
-
-.palette__color_blue {
-  background-color: blue; }
-
-.palette__color_green {
-  background-color: green; }
-
-.palette__color_yellow {
-  background-color: yellow; }

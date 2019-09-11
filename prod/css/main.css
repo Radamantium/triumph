@@ -59,9 +59,9 @@ path {
 circle {
   cursor: grab; }
 
-circle:active {
-  cursor: grabbing; }
-
+/*circle:active {
+  cursor: grabbing;
+}*/
 .palette {
   position: absolute;
   top: 60px;

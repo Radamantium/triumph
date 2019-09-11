@@ -1,25 +1,24 @@
 'use strict';
 
-/* BASE VARIABLES */
+/* BASE VARIABLES & DEFAULT OPTIONS*/
+let options = {
+  defaultCurveFill:              'none',
+  defaultCurveStroke:            'dimgrey',
+  defaultCurveStrokeWidth:        4,
+  defaultCurveStrokeLinecap:     'round',
+
+  defaultGuideLineFill:          'none',
+  defaultGuideLineStroke:        'black',
+  defaultGuideLineStrokeWidth:    1,
+  defaultGuideLineStrokeLinecap: 'round',
+
+  defaultGuidePointFill:         'red',
+  defaultGuidePointStroke:       'black',
+  defaultGuidePointStrokeWidth:   1,
+  defaultGuidePointRadius:        5
+};
+
 let curveCounter = counter();
-
-
-/* DEFAULT OPTIONS */
-let defaultCurveFill = 'none';
-let defaultCurveStroke = 'dimgrey';
-let defaultCurveStrokeWidth = 4;
-let defaultCurveStrokeLinecap = 'round';
-
-let defaultGuideLineFill = 'none';
-let defaultGuideLineStroke = 'black';
-let defaultGuideLineStrokeWidth = 1;
-let defaultGuideLineStrokeLinecap = 'round';
-
-let defaultGuidePointFill = 'red';
-let defaultGuidePointStroke = 'black';
-let defaultGuidePointStrokeWidth = 1;
-let defaultGuidePointRadius = 5;
-
 
 /* SERVICE FUNCTIONS */
 function counter() {
@@ -31,274 +30,280 @@ function Point(coordX, coordY) {
   return { coordX, coordY };
 }
 
-function getLocalCoords(e) {
-  let box = bezierCanvas.getBoundingClientRect();
+function getLocalCoordsRegardingTo(parent, e) {
+  let box = parent.getBoundingClientRect();
   let localCoordX = Math.round( e.pageX - box.x );
   let localCoordY = Math.round( e.pageY - box.y );
   return new Point(localCoordX, localCoordY);
 }
 
+let getLocalCoords = getLocalCoordsRegardingTo.bind(null, bezierCanvas);
+
 /* CONSTRUCTOR */
 function CubicBezierCurve(pointA, pointC1, pointC2, pointB, canvas) {
 
-  /* FUNCTIONS */
-
-  // this.visibleGuides = true;
-
-  //!!!!!!!!!!!!!!!!!!!!!!!!
-  // newPath.addEventListener('click', selectCurve.bind(newPath));
-
-
-  this.generateCurveHTML = function() {
-    let pathTemplate = document.getElementById('path-template');
-    this.html = pathTemplate.cloneNode(false);
-    this.num = curveCounter();
-    this.id = 'curve_' + this.num;
-    this.html.id = this.id;
+  this._createNewCurve = function() {
+    this._generateHTML();
+    this._setDefaultDisplayParams();
+    this.setPointsAndUpdate(pointA, pointC1, pointC2, pointB);
+    this._appendHTMLTo(canvas);
   };
 
-  this.setCurveDefaultDisplayParams = function() {
-    this.fill = defaultCurveFill;
-    this.stroke = defaultCurveStroke;
-    this.strokeWidth = defaultCurveStrokeWidth;
-    this.strokeLinecap = defaultCurveStrokeLinecap;
-
-    this.setCurveDisplayParams();
+  this._generateHTML = function() {
+    let num = curveCounter();
+    this._generateCurveHTML(num);
+    this._generateGuidesHTML(num);
   };
 
-  this.setCurveDisplayParams = function() {
-    this.html.setAttribute('fill',           this.fill);
-    this.html.setAttribute('stroke',         this.stroke);
-    this.html.setAttribute('stroke-width',   this.strokeWidth);
-    this.html.setAttribute('stroke-linecap', this.strokeLinecap);
+    this._generateCurveHTML = function(num) {
+      let pathTemplate = document.getElementById('path-template');
+      this.html = pathTemplate.cloneNode(false);
+      this.id = 'curve_' + num;
+      this.html.id = this.id;
+    };
+
+    this._generateGuidesHTML = function(num) {
+        let lineTemplate = document.getElementById('line-template');
+        let circTemplate = document.getElementById('circle-template');
+
+        let guideLineAC1 = lineTemplate.cloneNode(false);
+        let guideLineBC2 = lineTemplate.cloneNode(false);
+        let guidePointA  = circTemplate.cloneNode(false);
+        let guidePointC1 = circTemplate.cloneNode(false);
+        let guidePointB  = circTemplate.cloneNode(false);
+        let guidePointC2 = circTemplate.cloneNode(false);
+
+        guideLineAC1.id = 'guideAC1_'     + num;
+        guideLineBC2.id = 'guideBC2_'     + num;
+        guidePointA.id  = 'guidePointA_'  + num;
+        guidePointC1.id = 'guidePointC1_' + num;
+        guidePointC2.id = 'guidePointC2_' + num;
+        guidePointB.id  = 'guidePointB_'  + num;
+
+        this.guides = {
+          guideLineAC1,
+          guideLineBC2,
+          guidePointA,
+          guidePointC1,
+          guidePointC2,
+          guidePointB
+        };
+    };
+
+
+  this._setDefaultDisplayParams = function() {
+    this._setCurveDefaultDisplayParams();
+    this._setGuidesDefaultDisplayParams();
   };
+
+    this._setCurveDefaultDisplayParams = function() {
+      this.fill          = options.defaultCurveFill;
+      this.stroke        = options.defaultCurveStroke;
+      this.strokeWidth   = options.defaultCurveStrokeWidth;
+      this.strokeLinecap = options.defaultCurveStrokeLinecap;
+
+      this._setCurveDisplayParams();
+    };
+
+    this._setCurveDisplayParams = function() {
+      this.html.setAttribute('fill',           this.fill);
+      this.html.setAttribute('stroke',         this.stroke);
+      this.html.setAttribute('stroke-width',   this.strokeWidth);
+      this.html.setAttribute('stroke-linecap', this.strokeLinecap);
+    };
+
+    this._setGuidesDefaultDisplayParams = function() {
+      this.guideLineFill          = options.defaultGuideLineFill;
+      this.guideLineStroke        = options.defaultGuideLineStroke;
+      this.guideLineStrokeWidth   = options.defaultGuideLineStrokeWidth;
+      this.guideLineStrokeLinecap = options.defaultGuideLineStrokeLinecap;
+
+      this.guidePointFill         = options.defaultGuidePointFill;
+      this.guidePointStroke       = options.defaultGuidePointStroke;
+      this.guidePointStrokeWidth  = options.defaultGuidePointStrokeWidth;
+      this.guidePointRadius       = options.defaultGuidePointRadius;
+
+      this._setGuidesDisplayParams();
+    }
+
+    this._setGuidesDisplayParams = function() {
+      this.guides.guideLineAC1.setAttribute('fill', this.guideLineFill);
+      this.guides.guideLineAC1.setAttribute('stroke', this.guideLineStroke);
+      this.guides.guideLineAC1.setAttribute('stroke-width', this.guideLineStrokeWidth);
+      this.guides.guideLineAC1.setAttribute('stroke-linecap', this.guideLineStrokeLinecap);
+      
+      this.guides.guideLineBC2.setAttribute('fill', this.guideLineFill);
+      this.guides.guideLineBC2.setAttribute('stroke', this.guideLineStroke);
+      this.guides.guideLineBC2.setAttribute('stroke-width', this.guideLineStrokeWidth);
+      this.guides.guideLineBC2.setAttribute('stroke-linecap', this.guideLineStrokeLinecap);
+      
+      this.guides.guidePointA.setAttribute('fill', this.guidePointFill);
+      this.guides.guidePointA.setAttribute('stroke', this.guidePointStroke);
+      this.guides.guidePointA.setAttribute('stroke-width', this.guidePointStrokeWidth);
+      this.guides.guidePointA.setAttribute('r', this.guidePointRadius);
+      
+      this.guides.guidePointC1.setAttribute('fill', this.guidePointFill);
+      this.guides.guidePointC1.setAttribute('stroke', this.guidePointStroke);
+      this.guides.guidePointC1.setAttribute('stroke-width', this.guidePointStrokeWidth);
+      this.guides.guidePointC1.setAttribute('r', this.guidePointRadius);
+      
+      this.guides.guidePointC2.setAttribute('fill', this.guidePointFill);
+      this.guides.guidePointC2.setAttribute('stroke', this.guidePointStroke);
+      this.guides.guidePointC2.setAttribute('stroke-width', this.guidePointStrokeWidth);
+      this.guides.guidePointC2.setAttribute('r', this.guidePointRadius);
+      
+      this.guides.guidePointB.setAttribute('fill', this.guidePointFill);
+      this.guides.guidePointB.setAttribute('stroke', this.guidePointStroke);
+      this.guides.guidePointB.setAttribute('stroke-width', this.guidePointStrokeWidth);
+      this.guides.guidePointB.setAttribute('r', this.guidePointRadius);
+    };
+
 
   this.setPointsAndUpdate = function(pointA, pointC1, pointC2, pointB) {
-    this.setPoints(pointA, pointC1, pointC2, pointB);
-    this.updatePath();
-    this.updateGuidesPosition();
+    this._setPoints(pointA, pointC1, pointC2, pointB);
+    this._updatePath();
+    this._updateGuidesPosition();
   };
 
-  this.setPoints = function(pointA, pointC1, pointC2, pointB) {
-    this.pointA  = pointA;
-    this.pointC1 = pointC1;
-    this.pointC2 = pointC2;
-    this.pointB  = pointB;
-  };
-
-  this.updatePath = function() {
-    let path = `M ${this.pointA.coordX},   ${this.pointA.coordY} 
-                C ${this.pointC1.coordX},  ${this.pointC1.coordY}, 
-                  ${this.pointC2.coordX},  ${this.pointC2.coordY}, 
-                  ${this.pointB.coordX},   ${this.pointB.coordY}`;
-    this.html.setAttribute('d', path);
-  };
-
-  this.appendCurveHTMLTo = function(parent) {
-    parent.appendChild(this.html)
-  };
-
-  this.generateGuidesHTML = function() {
-      let lineTemplate = document.getElementById('line-template');
-      let circTemplate = document.getElementById('circle-template');
-
-      let guideLineAC1 = lineTemplate.cloneNode(false);
-      let guideLineBC2 = lineTemplate.cloneNode(false);
-      let guidePointA  = circTemplate.cloneNode(false);
-      let guidePointC1 = circTemplate.cloneNode(false);
-      let guidePointB  = circTemplate.cloneNode(false);
-      let guidePointC2 = circTemplate.cloneNode(false);
-
-      guideLineAC1.id = 'guideAC1_' + this.num;
-      guideLineBC2.id = 'guideBC2_' + this.num;
-      guidePointA.id  = 'guidePointA_' + this.num;
-      guidePointC1.id = 'guidePointC1_' + this.num;
-      guidePointC2.id = 'guidePointC2_' + this.num;
-      guidePointB.id  = 'guidePointB_' + this.num;
-
-      this.guides = {
-        guideLineAC1,
-        guideLineBC2,
-        guidePointA,
-        guidePointC1,
-        guidePointC2,
-        guidePointB
-      };
-  };
-
-  this.setGuidesDefaultDisplayParams = function() {
-    this.guideLineFill = defaultGuideLineFill;
-    this.guideLineStroke = defaultGuideLineStroke;
-    this.guideLineStrokeWidth = defaultGuideLineStrokeWidth;
-    this.guideLineStrokeLinecap = defaultGuideLineStrokeLinecap;
-
-    this.guidePointFill = defaultGuidePointFill;
-    this.guidePointStroke = defaultGuidePointStroke;
-    this.guidePointStrokeWidth = defaultGuidePointStrokeWidth;
-    this.guidePointRadius = defaultGuidePointRadius;
-
-    this.setGuidesDisplayParams();
-  }
-
-  this.setGuidesDisplayParams = function() {
-    this.guides.guideLineAC1.setAttribute('fill', this.guideLineFill);
-    this.guides.guideLineAC1.setAttribute('stroke', this.guideLineStroke);
-    this.guides.guideLineAC1.setAttribute('stroke-width', this.guideLineStrokeWidth);
-    this.guides.guideLineAC1.setAttribute('stroke-linecap', this.guideLineStrokeLinecap);
-    
-    this.guides.guideLineBC2.setAttribute('fill', this.guideLineFill);
-    this.guides.guideLineBC2.setAttribute('stroke', this.guideLineStroke);
-    this.guides.guideLineBC2.setAttribute('stroke-width', this.guideLineStrokeWidth);
-    this.guides.guideLineBC2.setAttribute('stroke-linecap', this.guideLineStrokeLinecap);
-    
-    this.guides.guidePointA.setAttribute('fill', this.guidePointFill);
-    this.guides.guidePointA.setAttribute('stroke', this.guidePointStroke);
-    this.guides.guidePointA.setAttribute('stroke-width', this.guidePointStrokeWidth);
-    this.guides.guidePointA.setAttribute('r', this.guidePointRadius);
-    
-    this.guides.guidePointC1.setAttribute('fill', this.guidePointFill);
-    this.guides.guidePointC1.setAttribute('stroke', this.guidePointStroke);
-    this.guides.guidePointC1.setAttribute('stroke-width', this.guidePointStrokeWidth);
-    this.guides.guidePointC1.setAttribute('r', this.guidePointRadius);
-    
-    this.guides.guidePointC2.setAttribute('fill', this.guidePointFill);
-    this.guides.guidePointC2.setAttribute('stroke', this.guidePointStroke);
-    this.guides.guidePointC2.setAttribute('stroke-width', this.guidePointStrokeWidth);
-    this.guides.guidePointC2.setAttribute('r', this.guidePointRadius);
-    
-    this.guides.guidePointB.setAttribute('fill', this.guidePointFill);
-    this.guides.guidePointB.setAttribute('stroke', this.guidePointStroke);
-    this.guides.guidePointB.setAttribute('stroke-width', this.guidePointStrokeWidth);
-    this.guides.guidePointB.setAttribute('r', this.guidePointRadius);
-  };
-
-  this.updateGuidesPosition = function() {
-    this.guides.guideLineAC1.setAttribute('x1', this.pointA.coordX);
-    this.guides.guideLineAC1.setAttribute('y1', this.pointA.coordY);
-    this.guides.guideLineAC1.setAttribute('x2', this.pointC1.coordX);
-    this.guides.guideLineAC1.setAttribute('y2', this.pointC1.coordY);
-    
-    this.guides.guideLineBC2.setAttribute('x1', this.pointB.coordX);
-    this.guides.guideLineBC2.setAttribute('y1', this.pointB.coordY);
-    this.guides.guideLineBC2.setAttribute('x2', this.pointC2.coordX);
-    this.guides.guideLineBC2.setAttribute('y2', this.pointC2.coordY);
-    
-    this.guides.guidePointA.setAttribute('cx', this.pointA.coordX);
-    this.guides.guidePointA.setAttribute('cy', this.pointA.coordY);
-    
-    this.guides.guidePointC1.setAttribute('cx', this.pointC1.coordX);
-    this.guides.guidePointC1.setAttribute('cy', this.pointC1.coordY);
-    
-    this.guides.guidePointC2.setAttribute('cx', this.pointC2.coordX);
-    this.guides.guidePointC2.setAttribute('cy', this.pointC2.coordY);
-    
-    this.guides.guidePointB.setAttribute('cx', this.pointB.coordX);
-    this.guides.guidePointB.setAttribute('cy', this.pointB.coordY);
-  };
-
-  this.appendGuidesHTMLTo = function(parent) {
-    parent.appendChild( this.guides.guideLineAC1 );
-    parent.appendChild( this.guides.guideLineBC2 );
-    parent.appendChild( this.guides.guidePointA );
-    parent.appendChild( this.guides.guidePointC1 );
-    parent.appendChild( this.guides.guidePointB );
-    parent.appendChild( this.guides.guidePointC2 );
-  };
-
-  this.setPointsListeners = function() {
-    this.setPointMoveListener(this.guides.guidePointA,  this.setAndUpdatePointA.bind(this));
-    this.setPointMoveListener(this.guides.guidePointC1, this.setAndUpdatePointC1.bind(this));
-    this.setPointMoveListener(this.guides.guidePointC2, this.setAndUpdatePointC2.bind(this));
-    this.setPointMoveListener(this.guides.guidePointB,  this.setAndUpdatePointB.bind(this));
-  };    
-
-  this.setPointMoveListener = function(element, callback) {
-    element.onmousedown = function(e) {
-      e.stopPropagation();
-      e.preventDefault();
-
-      document.onmousemove = function(e) {
-        e.stopPropagation();
-        let point = getLocalCoords(e);
-        callback(point);
-      };
-
-      document.onmouseup = function(e) {
-        document.onmousemove = null;
-        document.onmouseup = null;
-      };
+    this._setPoints = function(pointA, pointC1, pointC2, pointB) {
+      if (pointA)  this._pointA  = pointA;
+      if (pointC1) this._pointC1 = pointC1;
+      if (pointC2) this._pointC2 = pointC2;
+      if (pointB)  this._pointB  = pointB;
     };
-  }
 
-  this.setAndUpdatePointA = function(pointA) {
-    this.pointA = pointA;
-    this.updatePath();
-    this.updateGuidesPosition();
-  };
-
-  this.setAndUpdatePointC1 = function(pointC1) {
-    this.pointC1 = pointC1;
-    this.updatePath();
-    this.updateGuidesPosition();
-  };
-
-  this.setAndUpdatePointC2 = function(pointC2) {
-    this.pointC2 = pointC2;
-    this.updatePath();
-    this.updateGuidesPosition();
-  };
-
-  this.setAndUpdatePointB = function(pointB) {
-    this.pointB = pointB;
-    this.updatePath();
-    this.updateGuidesPosition();
-  };
-
-  this.setColorAndUpate = function(color) {
-    this.stroke = color;
-    this.html.setAttribute('stroke', color);
-  }
-
-///////////
-
-  this.setMoveListener = function() {
-    this.setCurveMoveListener(this.html, this.move.bind(this));
-  };   
-
-  this.setCurveMoveListener = function(element, moveCallback) {
-    element.onmousedown = function(e) {
-      e.stopPropagation();
-      e.preventDefault();
-      let startPosition = getLocalCoords(e);
-
-      document.onmousemove = function(e) {
-        e.stopPropagation();
-        let nextPosition = getLocalCoords(e);
-        let deltaX = nextPosition.coordX - startPosition.coordX;
-        let deltaY = nextPosition.coordY - startPosition.coordY;
-        startPosition = nextPosition;
-        moveCallback(deltaX, deltaY);
-      };
-
-      document.onmouseup = function(e) {
-        document.onmousemove = null;
-        document.onmouseup = null;
-      };
+    this._updatePath = function() {
+      let path = `M ${this._pointA.coordX},   ${this._pointA.coordY} 
+                  C ${this._pointC1.coordX},  ${this._pointC1.coordY}, 
+                    ${this._pointC2.coordX},  ${this._pointC2.coordY}, 
+                    ${this._pointB.coordX},   ${this._pointB.coordY}`;
+      this.html.setAttribute('d', path);
     };
-  }
 
-  this.move = function(deltaX, deltaY) {
-    let newPointA  = new Point(deltaX + this.pointA.coordX,  deltaY + this.pointA.coordY);
-    let newPointC1 = new Point(deltaX + this.pointC1.coordX, deltaY + this.pointC1.coordY);
-    let newPointC2 = new Point(deltaX + this.pointC2.coordX, deltaY + this.pointC2.coordY);
-    let newPointB  = new Point(deltaX + this.pointB.coordX,  deltaY + this.pointB.coordY);
+    this._updateGuidesPosition = function() {
+      this.guides.guideLineAC1.setAttribute('x1', this._pointA.coordX);
+      this.guides.guideLineAC1.setAttribute('y1', this._pointA.coordY);
+      this.guides.guideLineAC1.setAttribute('x2', this._pointC1.coordX);
+      this.guides.guideLineAC1.setAttribute('y2', this._pointC1.coordY);
+      
+      this.guides.guideLineBC2.setAttribute('x1', this._pointB.coordX);
+      this.guides.guideLineBC2.setAttribute('y1', this._pointB.coordY);
+      this.guides.guideLineBC2.setAttribute('x2', this._pointC2.coordX);
+      this.guides.guideLineBC2.setAttribute('y2', this._pointC2.coordY);
+      
+      this.guides.guidePointA.setAttribute('cx', this._pointA.coordX);
+      this.guides.guidePointA.setAttribute('cy', this._pointA.coordY);
+      
+      this.guides.guidePointC1.setAttribute('cx', this._pointC1.coordX);
+      this.guides.guidePointC1.setAttribute('cy', this._pointC1.coordY);
+      
+      this.guides.guidePointC2.setAttribute('cx', this._pointC2.coordX);
+      this.guides.guidePointC2.setAttribute('cy', this._pointC2.coordY);
+      
+      this.guides.guidePointB.setAttribute('cx', this._pointB.coordX);
+      this.guides.guidePointB.setAttribute('cy', this._pointB.coordY);
+    };
 
-    this.setPoints(newPointA, newPointC1, newPointC2, newPointB);
-    this.updatePath();
-    this.updateGuidesPosition();
+
+  this._appendHTMLTo = function(parent) {
+    this._appendCurveHTMLTo(parent);
+    this._appendGuidesHTMLTo(parent);
   };
 
-////////////////////
+    this._appendCurveHTMLTo = function(parent) {
+      parent.appendChild(this.html)
+    };
+
+    this._appendGuidesHTMLTo = function(parent) {
+      parent.appendChild( this.guides.guideLineAC1 );
+      parent.appendChild( this.guides.guideLineBC2 );
+      parent.appendChild( this.guides.guidePointA );
+      parent.appendChild( this.guides.guidePointC1 );
+      parent.appendChild( this.guides.guidePointB );
+      parent.appendChild( this.guides.guidePointC2 );
+    };
+
+
+  this.setMoveListeners = function() {
+    this._setCurveMoveListener(this.html, this.move.bind(this));
+    this._setPointsListeners();
+  };
+
+    this._setCurveMoveListener = function(element, moveCallback) {
+      element.onmousedown = function(e) {
+        e.stopPropagation();
+        e.preventDefault();
+        let startPosition = getLocalCoords(e);
+
+        document.onmousemove = function(e) {
+          let nextPosition = getLocalCoords(e);
+          let deltaX = nextPosition.coordX - startPosition.coordX;
+          let deltaY = nextPosition.coordY - startPosition.coordY;
+          startPosition = nextPosition;
+          moveCallback(deltaX, deltaY);
+        };
+
+        document.onmouseup = function(e) {
+          document.onmousemove = null;
+          document.onmouseup = null;
+        };
+      };
+    }
+
+    this.move = function(deltaX, deltaY) {
+      let newPointA  = new Point(deltaX + this._pointA.coordX,  deltaY + this._pointA.coordY);
+      let newPointC1 = new Point(deltaX + this._pointC1.coordX, deltaY + this._pointC1.coordY);
+      let newPointC2 = new Point(deltaX + this._pointC2.coordX, deltaY + this._pointC2.coordY);
+      let newPointB  = new Point(deltaX + this._pointB.coordX,  deltaY + this._pointB.coordY);
+
+      this.setPointsAndUpdate(newPointA, newPointC1, newPointC2, newPointB);
+    };
+
+    this._setPointsListeners = function() {
+      this._setPointMoveListener(this.guides.guidePointA,  this.setAndUpdatePointA.bind(this));
+      this._setPointMoveListener(this.guides.guidePointC1, this.setAndUpdatePointC1.bind(this));
+      this._setPointMoveListener(this.guides.guidePointC2, this.setAndUpdatePointC2.bind(this));
+      this._setPointMoveListener(this.guides.guidePointB,  this.setAndUpdatePointB.bind(this));
+    };    
+
+    this._setPointMoveListener = function(element, callback) {
+      element.onmousedown = function(e) {
+        e.stopPropagation();
+        e.preventDefault();
+
+        document.onmousemove = function(e) {
+          let point = getLocalCoords(e);
+          callback(point);
+        };
+
+        document.onmouseup = function(e) {
+          document.onmousemove = null;
+          document.onmouseup = null;
+        };
+      };
+    }
+
+    this.setAndUpdatePointA = function(pointA) {
+      this.setPointsAndUpdate(pointA, null, null, null);
+    };
+
+    this.setAndUpdatePointC1 = function(pointC1) {
+      this.setPointsAndUpdate(null, pointC1, null, null);
+    };
+
+    this.setAndUpdatePointC2 = function(pointC2) {
+      this.setPointsAndUpdate(null, null, pointC2, null);
+    };
+
+    this.setAndUpdatePointB = function(pointB) {
+      this.setPointsAndUpdate(null, null, null, pointB);
+    };
+
+  this.setSelectListener = function(callback) {
+    this.html.addEventListener('mousedown', callback);
+  };
+
+
   this.showGuides = function() {
     for (let key in this.guides) {
       this.guides[key].setAttribute('visibility', 'visible');
@@ -311,12 +316,12 @@ function CubicBezierCurve(pointA, pointC1, pointC2, pointB, canvas) {
     }
   };
 
-  this.updateParameters = function() {
-    this.updatePath();
-    this.setCurveDisplayParams();
-    this.updateGuidesPosition();
-    this.setGuidesDisplayParams();
-  };
+
+  this.setColorAndUpate = function(color) {
+    this.stroke = color;
+    this.html.setAttribute('stroke', this.stroke);
+  }
+
 
   this.delete = function() {
     document.getElementById(this.id).remove();
@@ -328,18 +333,7 @@ function CubicBezierCurve(pointA, pointC1, pointC2, pointB, canvas) {
     document.getElementById(this.guides.guidePointB.id).remove();
   };
 
-////////////////////////
 
   /* GENERATE NEW CURVE */
-  this.generateCurveHTML();
-  this.setCurveDefaultDisplayParams();
-  this.setPoints(pointA, pointC1, pointC2, pointB);
-  this.appendCurveHTMLTo(canvas);
-  this.updatePath();
-  this.generateGuidesHTML();
-  this.setGuidesDefaultDisplayParams();
-  this.updateGuidesPosition();
-  this.appendGuidesHTMLTo(canvas);
-  // this.setPointsListeners();
-  // this.setMoveListener();
+  this._createNewCurve();
 }

@@ -76,9 +76,9 @@ circle {
   cursor: grab;
 }
 
-circle:active {
+/*circle:active {
   cursor: grabbing;
-}
+}*/
 
 .palette {
   position: absolute;

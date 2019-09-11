@@ -1,8 +1,8 @@
 'use strict';
 
-bezier();
+bezierApp();
 
-function bezier(svgCanvasId = 'bezierCanvas',
+function bezierApp(svgCanvasId = 'bezierCanvas',
                 clearBtnId  = 'clear-btn', 
                 addBtnId    = 'add-curve-btn', 
                 delBtnId    = 'del-curve-btn', 
@@ -14,8 +14,6 @@ function bezier(svgCanvasId = 'bezierCanvas',
   let addButton;
   let delButton;
   let changeColorButton;
-
-
 
   try {
     let errorStingBegin = 'function "bezier" error. Uncorrect input data: ';
@@ -124,20 +122,17 @@ function bezier(svgCanvasId = 'bezierCanvas',
             document.onmousemove = null;
             document.onmouseup = null;
             bezierCanvas.onmousedown = null;
-            setupNewCurve(newCurve);
+
+            newCurve.setMoveListeners();
+            newCurve.setSelectListener( selectCurve.bind(newCurve) );
+            selectedCurve = newCurve;
+            curves.push(newCurve);
           };
         };
       }
     }
   }
 
-  function setupNewCurve(curve) {
-    curve.setPointsListeners();
-    curve.setMoveListener();
-    curve.html.addEventListener('mousedown', selectCurve.bind(curve));
-    selectedCurve = curve;
-    curves.push(curve);
-  }
 
   function clearBezierCanvas(e) {
     for(let curve of curves) {
@@ -185,7 +180,7 @@ function bezier(svgCanvasId = 'bezierCanvas',
       let newColor = button.dataset.color;
       button.addEventListener('click', function() {
         if (selectedCurve == null) {
-          defaultCurveStroke = newColor;
+          options.defaultCurveStroke = newColor;
         } else {
           selectedCurve.setColorAndUpate(newColor);
         }
